@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\ButtonController.cs" />
      <Compile Include="Assets\Scripts\CatmullRomControllerTest.cs" />
      <Compile Include="Assets\Scripts\CatmullRomManager.cs" />
      <Compile Include="Assets\Scripts\ColliderDetection.cs" />
