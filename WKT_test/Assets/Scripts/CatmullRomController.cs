@@ -1,39 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class CatmullRomManager : MonoBehaviour
+public class CatmullRomController : MonoBehaviour
 {
 
 	public List<Transform> controlPointList = new List<Transform>();
-	public List<Vector3> totalPointList = new List<Vector3>();
-	public GameObject controlPoint;
-	public bool isLoop = false;
+	public GameObject controlPoint_clone;
 	public float lineWidth = 1.0f;
 	public int numberOfPoints = 50;
 	public int neartestIndex = 0;
 	
 	private LineRenderer lineRenderer;
-	void Start()
+	public List<Vector3> innerPointList = new List<Vector3>();
+	private List<GameObject> ringMirrorSplineList = new List<GameObject>();
+	void Awake()
 	{
 		lineRenderer = GetComponent<LineRenderer>();
 		if (!lineRenderer)
 		{
 			gameObject.AddComponent<LineRenderer>();
-			lineRenderer = GetComponent<LineRenderer>();
+			lineRenderer =GetComponent<LineRenderer>();
 		}
 		lineRenderer.useWorldSpace = true;
 		lineRenderer.SetColors(Color.white, Color.white);
 		lineRenderer.SetWidth(lineWidth, lineWidth);
 
-		resetCatmullRom();
+		ResetCatmullRom();
 	}
-	public void resetCatmullRom() 
+	public void ResetCatmullRom() 
 	{
-		controlPointSetting();
+		ControlPointSetting();
 		DisplayCatmullromSpline();
 		RenderCatmullromSpline();
 	}
-	void controlPointSetting()
+	void ControlPointSetting()
 	{
 		if (controlPointList.Count < 4)
 		{
@@ -46,14 +46,12 @@ public class CatmullRomManager : MonoBehaviour
 			{
 				controlPointList.Add(controlPointList[1]);
 				controlPointList.Insert(0, controlPointList[0]);
-				if (isLoop) lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count));
-				else lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
+				lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
 			}
 		}
 		else
 		{
-			if (isLoop) lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count));
-			else lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
+			 lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
 		}
 	}
 	Vector3 ReturnCatmullRomPos(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
@@ -63,15 +61,13 @@ public class CatmullRomManager : MonoBehaviour
 	}
 	void DisplayCatmullromSpline()
 	{
-		totalPointList.Clear();
+		innerPointList.Clear();
 		for (int index = 0; index < controlPointList.Count; index++)
 		{
-			if (!isLoop)
+
+			if ((index == 0 || index == controlPointList.Count - 2 || index == controlPointList.Count - 1))
 			{
-				if ((index == 0 || index == controlPointList.Count - 2 || index == controlPointList.Count - 1))
-				{
-					continue;
-				}
+				continue;
 			}
 			Vector3 p0 = controlPointList[(index - 1 + controlPointList.Count) % controlPointList.Count].transform.position;
 			Vector3 p1 = controlPointList[(index + controlPointList.Count) % controlPointList.Count].transform.position;
@@ -83,23 +79,23 @@ public class CatmullRomManager : MonoBehaviour
 			for (int i = 0; i < numberOfPoints; i++)
 			{
 				Vector3 newPos = ReturnCatmullRomPos(t, p0, p1, p2, p3);
-				totalPointList.Add(newPos);
+				innerPointList.Add(newPos);
 				t += segmentation;
 			}
 		}
 	}
 	void RenderCatmullromSpline()
 	{
-		for (int i = 0; i < totalPointList.Count; i++)
+		for (int i = 0; i < innerPointList.Count; i++)
 		{
-			lineRenderer.SetPosition(i, totalPointList[i]);
+			lineRenderer.SetPosition(i, innerPointList[i]);
 		}
 	}
 
 	public void AddControlPoint(Vector3 point)
 	{
 		GameObject clone;
-		clone = Instantiate(controlPoint, point, controlPoint.transform.rotation) as GameObject;
+		clone = Instantiate(controlPoint_clone, point, controlPoint_clone.transform.rotation) as GameObject;
 		clone.transform.parent = gameObject.transform;
 		if(controlPointList.Count<4)
 			controlPointList.Add(clone.transform);
@@ -109,18 +105,11 @@ public class CatmullRomManager : MonoBehaviour
 			controlPointList.Add(clone.transform);
 		}
 	}
-	public void InsertControlPoint(Vector3 point)
-	{
-		GameObject clone;
-		clone = Instantiate(controlPoint, point, controlPoint.transform.rotation) as GameObject;
-		clone.transform.parent = gameObject.transform;
-		controlPointList.Insert(neartestIndex, clone.transform);
-	}
 	public void MoveControlPoint(GameObject obj, Vector3 point)
 	{
 		obj.transform.position = point;
 	}
-	public void removeControlPoint(GameObject obj)
+	public void RemoveControlPoint(GameObject obj)
 	{
 		if (controlPointList.Count >4) {
 			for (int index = 0; index < controlPointList.Count; index++)
@@ -181,24 +170,68 @@ public class CatmullRomManager : MonoBehaviour
 
 		}
 	}
-	public int nearestControlPointDis(Vector3 point)
+	public int NearestControlPointDis(Vector3 point)
 	{
 		float mindis = float.MaxValue;
 		List<int> minList = new List<int>();
-		for (int i = 0; i < totalPointList.Count; i++)
+		for (int i = 0; i < innerPointList.Count; i++)
 		{
-			if (Vector3.Distance(point, totalPointList[i]) <= mindis)
+			if (Vector3.Distance(point, innerPointList[i]) <= mindis)
 			{
-				mindis = Vector3.Distance(point, totalPointList[i]);
+				mindis = Vector3.Distance(point, innerPointList[i]);
 				minList.Insert(0, i / numberOfPoints);
 			}
 		}
 		neartestIndex = minList[0];
 		return neartestIndex;
 	}
-	public void mirrorControlPointLine()
+	public void SetRingMirror()
 	{
-		GameObject clone;
-		clone = Instantiate(this.gameObject, transform.position, this.gameObject.transform.rotation) as GameObject;
+/*
+		int number=10;
+		float radius=0;
+		float radiusSelf = controlPointList[controlPointList.Count - 1].position.x - controlPointList[0].position.x;
+		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
+		Vector3 offset = transform.position - centerPos - new Vector3(radiusSelf, 0, 0);
+		for (int i = 1; i <number; i++) 
+		{
+			float radian= (float)i * 2f * Mathf.PI / (float)number;
+			float x = Mathf.Cos(radian) * radiusSelf;
+			float z = Mathf.Sin(radian) * radiusSelf;
+ 			Vector3 pos = new Vector3(x, 0, z) + centerPos;
+ 			Quaternion rot = Quaternion.FromToRotation(Vector3.right, pos-centerPos);
+			GameObject clone = Instantiate(this.gameObject, pos, rot) as GameObject;
+			clone.transform.Translate(offset);
+ 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
+		}*/
+		ringMirrorSplineList.Clear();
+		ringMirrorSplineList.Add(this.gameObject);
+		int number=10;
+		float radius=0;
+		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
+		for (int i = 1; i <number; i++) 
+		{
+			float angle = (float)i*360 / (float)number;
+			GameObject clone = Instantiate(this.gameObject, this.transform.position, this.transform.rotation) as GameObject;
+			clone.transform.RotateAround(centerPos, Vector3.up, angle);
+ 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
+			clone.GetComponent<CatmullRomController>().ShowControlPoint(false);
+			ringMirrorSplineList.Add(clone);
+		}
+	}
+	public void ShowControlPoint(bool isShow)
+	{
+		for (int i = 0; i < controlPointList.Count; i++)
+		{
+ 			controlPointList[i].gameObject.GetComponent<SphereCollider>().enabled = isShow;
+ 			controlPointList[i].gameObject.GetComponent<MeshRenderer>().enabled = isShow;
+		}
+	}
+	public void ResetRingMirrorControlPoint()
+	{
+		for(int i=1;i<ringMirrorSplineList.Count;i++){
+			Destroy(ringMirrorSplineList[i]);
+		}
+		SetRingMirror();
 	}
 }

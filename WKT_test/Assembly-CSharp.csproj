@@ -46,8 +46,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\ButtonController.cs" />
+     <Compile Include="Assets\Scripts\CatmullRomController.cs" />
      <Compile Include="Assets\Scripts\CatmullRomControllerTest.cs" />
-     <Compile Include="Assets\Scripts\CatmullRomManager.cs" />
      <Compile Include="Assets\Scripts\ColliderDetection.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

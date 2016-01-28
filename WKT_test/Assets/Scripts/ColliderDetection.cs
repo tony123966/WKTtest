@@ -5,9 +5,9 @@ public class ColliderDetection : MonoBehaviour {
 	 
 	public GameObject mainCamera;
 	public GameObject collisionPlane;
-	public CatmullRomManager catmullRomManager;
+	public CatmullRomController catmullRomController;
 	public ButtonController buttonCnotroller;
-	private GameObject chooseObj = null;
+	private static GameObject chooseObj = null;
 
 	void Start() 
 	{
@@ -24,8 +24,9 @@ public class ColliderDetection : MonoBehaviour {
 						{
 							if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
 							{
-								catmullRomManager.AddControlPoint(hit.point);
-								catmullRomManager.resetCatmullRom();
+								catmullRomController.AddControlPoint(hit.point);
+								catmullRomController.ResetCatmullRom();
+								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
 							}
 						}
 					}
@@ -40,8 +41,9 @@ public class ColliderDetection : MonoBehaviour {
 						{
 							if (hit.collider.gameObject.tag == "controlPoint")
 							{
-								catmullRomManager.removeControlPoint(hit.collider.gameObject);
-								catmullRomManager.resetCatmullRom();
+								catmullRomController.RemoveControlPoint(hit.collider.gameObject);
+								catmullRomController.ResetCatmullRom();
+								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
 							}
 						}
 					}
@@ -56,14 +58,15 @@ public class ColliderDetection : MonoBehaviour {
 					{
 						if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
 						{
-							catmullRomManager.MoveControlPoint(chooseObj, hit.point);
-							catmullRomManager.resetCatmullRom();
+							catmullRomController.MoveControlPoint(chooseObj, hit.point);
+							if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
 						}
 					}
 					if (Input.GetMouseButtonUp(0))
 					{
 						chooseObj=null;
 					}
+					catmullRomController.ResetCatmullRom();
 				}
 				else 
 				{
