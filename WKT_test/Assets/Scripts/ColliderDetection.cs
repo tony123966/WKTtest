@@ -22,10 +22,10 @@ public class ColliderDetection : MonoBehaviour {
 						RaycastHit hit;
 						if (Physics.Raycast(ray, out hit))
 						{
-							Debug.Log(hit.collider.gameObject.name);
 							if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
 							{
 								catmullRomManager.AddControlPoint(hit.point);
+								catmullRomManager.resetCatmullRom();
 							}
 						}
 					}
@@ -41,6 +41,7 @@ public class ColliderDetection : MonoBehaviour {
 							if (hit.collider.gameObject.tag == "controlPoint")
 							{
 								catmullRomManager.removeControlPoint(hit.collider.gameObject);
+								catmullRomManager.resetCatmullRom();
 							}
 						}
 					}
@@ -56,6 +57,7 @@ public class ColliderDetection : MonoBehaviour {
 						if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
 						{
 							catmullRomManager.MoveControlPoint(chooseObj, hit.point);
+							catmullRomManager.resetCatmullRom();
 						}
 					}
 					if (Input.GetMouseButtonUp(0))

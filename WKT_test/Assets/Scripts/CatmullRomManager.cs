@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 public class CatmullRomManager : MonoBehaviour
 {
 
@@ -12,8 +11,8 @@ public class CatmullRomManager : MonoBehaviour
 	public float lineWidth = 1.0f;
 	public int numberOfPoints = 50;
 	public int neartestIndex = 0;
+	
 	private LineRenderer lineRenderer;
-
 	void Start()
 	{
 		lineRenderer = GetComponent<LineRenderer>();
@@ -26,17 +25,37 @@ public class CatmullRomManager : MonoBehaviour
 		lineRenderer.SetColors(Color.white, Color.white);
 		lineRenderer.SetWidth(lineWidth, lineWidth);
 
-
+		resetCatmullRom();
 	}
-	void FixedUpdate()
+	public void resetCatmullRom() 
 	{
-		if (controlPointList.Count < 4) { lineRenderer.SetVertexCount(0);return; }
-		if (isLoop) lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count));
-		else lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
+		controlPointSetting();
 		DisplayCatmullromSpline();
 		RenderCatmullromSpline();
 	}
-
+	void controlPointSetting()
+	{
+		if (controlPointList.Count < 4)
+		{
+			if (controlPointList.Count < 2)
+			{
+				lineRenderer.SetVertexCount(0);
+				return;
+			}
+			else if (controlPointList.Count == 2)
+			{
+				controlPointList.Add(controlPointList[1]);
+				controlPointList.Insert(0, controlPointList[0]);
+				if (isLoop) lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count));
+				else lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
+			}
+		}
+		else
+		{
+			if (isLoop) lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count));
+			else lineRenderer.SetVertexCount(numberOfPoints * (controlPointList.Count - 3));
+		}
+	}
 	Vector3 ReturnCatmullRomPos(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
 	{
 		Vector3 pos = 0.5f * ((2f * p1) + (-p0 + p2) * t + (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t + (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t);
@@ -82,7 +101,13 @@ public class CatmullRomManager : MonoBehaviour
 		GameObject clone;
 		clone = Instantiate(controlPoint, point, controlPoint.transform.rotation) as GameObject;
 		clone.transform.parent = gameObject.transform;
-		controlPointList.Add(clone.transform);
+		if(controlPointList.Count<4)
+			controlPointList.Add(clone.transform);
+		else{
+			controlPointList.Remove(controlPointList[controlPointList.Count-1]);
+			controlPointList.Add(clone.transform);
+			controlPointList.Add(clone.transform);
+		}
 	}
 	public void InsertControlPoint(Vector3 point)
 	{
@@ -97,8 +122,64 @@ public class CatmullRomManager : MonoBehaviour
 	}
 	public void removeControlPoint(GameObject obj)
 	{
-		controlPointList.Remove(obj.transform);
-		Destroy(obj);
+		if (controlPointList.Count >4) {
+			for (int index = 0; index < controlPointList.Count; index++)
+			{
+				if (controlPointList[index] == obj.transform) 
+				{ 
+					if (index == 0)
+					{
+						controlPointList.Remove(controlPointList[0]);
+						controlPointList.Remove(controlPointList[0]);
+						controlPointList.Insert(0, controlPointList[0]);
+					}
+					else if (index == controlPointList.Count - 2)
+					{
+						controlPointList.Remove(controlPointList[controlPointList.Count-1]);
+						controlPointList.Remove(controlPointList[controlPointList.Count-1]);
+						controlPointList.Add(controlPointList[controlPointList.Count-1]);
+					}
+					else
+					{
+						controlPointList.Remove(obj.transform);
+					}
+					Destroy(obj);
+					break;
+				}
+			}
+		}
+		else 
+		{
+			if (controlPointList.Count== 4)
+			{
+				for (int index = 0; index < controlPointList.Count; index++)
+				{
+					if (controlPointList[index] == obj.transform) 
+					{
+						if (index == 0)
+						{
+							controlPointList.Remove(controlPointList[0]);
+							controlPointList.Remove(controlPointList[0]);
+							controlPointList.Remove(controlPointList[controlPointList.Count-1]);
+						}
+						else if (index == controlPointList.Count - 2)
+						{
+							controlPointList.Remove(controlPointList[controlPointList.Count - 1]);
+							controlPointList.Remove(controlPointList[controlPointList.Count - 1]);
+							controlPointList.Remove(controlPointList[0]);
+						}
+						Destroy(obj);
+						break;
+					}
+				}
+			}
+			else 
+			{
+				controlPointList.Remove(obj.transform);
+				Destroy(obj);
+			}
+
+		}
 	}
 	public int nearestControlPointDis(Vector3 point)
 	{
@@ -114,5 +195,10 @@ public class CatmullRomManager : MonoBehaviour
 		}
 		neartestIndex = minList[0];
 		return neartestIndex;
+	}
+	public void mirrorControlPointLine()
+	{
+		GameObject clone;
+		clone = Instantiate(this.gameObject, transform.position, this.gameObject.transform.rotation) as GameObject;
 	}
 }

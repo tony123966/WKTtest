@@ -5,6 +5,7 @@ public class ButtonController : MonoBehaviour {
 	public bool isAdd = false;
 	public bool isDelete = false;
 	public bool isMove = false;
+	public bool isMirror = false;
 	public void SetButtonAdd() 
 	{
 		isAdd=!isAdd;
@@ -23,10 +24,15 @@ public class ButtonController : MonoBehaviour {
 		isAdd = false;
 		isDelete = false;
 	}
+	public void SetButtonMirror()
+	{
+		isMirror=true;
+	}
 	public void resetAllState() 
 	{ 
 		isAdd = false;
 		isDelete = false;
 		isMove = false;
+		isMirror = false;
 	}
 }
