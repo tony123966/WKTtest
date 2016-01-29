@@ -6,9 +6,9 @@ public class ColliderDetection : MonoBehaviour {
 	public GameObject mainCamera;
 	public GameObject collisionPlane;
 	public CatmullRomController catmullRomController;
+	public BeamsController beamsController;
 	public ButtonController buttonCnotroller;
-	private static GameObject chooseObj = null;
-
+	public GameObject chooseObj = null;
 	void Start() 
 	{
 	}
@@ -22,11 +22,11 @@ public class ColliderDetection : MonoBehaviour {
 						RaycastHit hit;
 						if (Physics.Raycast(ray, out hit))
 						{
-							if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
+							if (hit.collider.gameObject == collisionPlane.gameObject)
 							{
 								catmullRomController.AddControlPoint(hit.point);
 								catmullRomController.ResetCatmullRom();
-								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
+								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
 							}
 						}
 					}
@@ -39,11 +39,11 @@ public class ColliderDetection : MonoBehaviour {
 						RaycastHit hit;
 						if (Physics.Raycast(ray, out hit))
 						{
-							if (hit.collider.gameObject.tag == "controlPoint")
+							if (hit.collider.gameObject.tag == "roofRidge")
 							{
 								catmullRomController.RemoveControlPoint(hit.collider.gameObject);
 								catmullRomController.ResetCatmullRom();
-								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
+								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
 							}
 						}
 					}
@@ -56,10 +56,16 @@ public class ColliderDetection : MonoBehaviour {
 					RaycastHit hit;
 					if (Physics.Raycast(ray, out hit))
 					{
-						if (hit.collider.gameObject.name == collisionPlane.gameObject.name)
+						if (hit.collider.gameObject == collisionPlane.gameObject)
 						{
-							catmullRomController.MoveControlPoint(chooseObj, hit.point);
-							if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint();
+							if (chooseObj.tag == "roofRidge") {
+								catmullRomController.MoveControlPoint(chooseObj, hit.point);
+								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+							}
+							else if (chooseObj.tag == "beam")
+							{
+								beamsController.MoveAllBeamsControlPoint(hit.point - chooseObj.transform.position);
+							}
 						}
 					}
 					if (Input.GetMouseButtonUp(0))
@@ -76,7 +82,7 @@ public class ColliderDetection : MonoBehaviour {
 						RaycastHit hit;
 						if (Physics.Raycast(ray, out hit))
 						{
-							if (hit.collider.gameObject.tag == "controlPoint")
+							if (hit.collider.gameObject.tag == "roofRidge" || hit.collider.gameObject.tag == "beam")
 							{
 								chooseObj = hit.collider.gameObject;
 							}

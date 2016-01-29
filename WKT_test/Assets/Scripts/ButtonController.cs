@@ -1,11 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class ButtonController : MonoBehaviour {
+	public CatmullRomController catmullromController;
+	public BeamsController beamsController;
 	public bool isAdd = false;
 	public bool isDelete = false;
 	public bool isMove = false;
 	public bool isRingMirror = false;
+
+	public Slider ringMirrorSlider;
+
+	public int ringMirrorSliderValue;
+	void Start() 
+	{ 
+		 ringMirrorSliderValue=(int)ringMirrorSlider.value;
+		 beamsController.NewBeamsSpline();
+	}
 	public void SetButtonAdd() 
 	{
 		isAdd=!isAdd;
@@ -26,7 +38,13 @@ public class ButtonController : MonoBehaviour {
 	}
 	public void SetButtonRingMirror()
 	{
-		isRingMirror = true;
+		isRingMirror =true;
+		catmullromController.SetRingMirror(ringMirrorSliderValue, 0);
+	}
+	public void SetRingMirrorSliderValue()
+	{
+		ringMirrorSliderValue = (int)(ringMirrorSlider.value);
+		if (isRingMirror) catmullromController.ResetRingMirrorControlPoint(ringMirrorSliderValue, 0);
 	}
 	public void ResetAllState() 
 	{ 
@@ -34,5 +52,6 @@ public class ButtonController : MonoBehaviour {
 		isDelete = false;
 		isMove = false;
 		isRingMirror = false;
+		ringMirrorSliderValue = 0;
 	}
 }
