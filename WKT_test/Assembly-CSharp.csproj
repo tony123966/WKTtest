@@ -48,8 +48,9 @@
      <Compile Include="Assets\Scripts\BeamsController.cs" />
      <Compile Include="Assets\Scripts\ButtonController.cs" />
      <Compile Include="Assets\Scripts\CatmullRomController.cs" />
-     <Compile Include="Assets\Scripts\CatmullRomControllerTest.cs" />
      <Compile Include="Assets\Scripts\ColliderDetection.cs" />
+     <Compile Include="Assets\Scripts\EaveController.cs" />
+     <Compile Include="Assets\Scripts\RoofController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

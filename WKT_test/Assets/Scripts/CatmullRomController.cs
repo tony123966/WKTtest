@@ -4,26 +4,28 @@ using System.Collections.Generic;
 public class CatmullRomController : MonoBehaviour
 {
 	public List<Transform> controlPointList = new List<Transform>();
+	public GameObject beams_clone;
 	public GameObject controlPoint_clone;
 	public float lineWidth = 1.0f;
 	public int numberOfPoints = 50;
-	public int neartestIndex = 0;
+
 	
 	private LineRenderer lineRenderer;
 	public List<Vector3> innerPointList = new List<Vector3>();
-	private List<GameObject> ringMirrorSplineList = new List<GameObject>();
+	public List<GameObject> ringMirrorSplineList = new List<GameObject>();
+	public List<GameObject> ringMirrorBeamsSplineList = new List<GameObject>();
+
 	void Awake()
 	{
 		lineRenderer = GetComponent<LineRenderer>();
 		if (!lineRenderer)
 		{
 			gameObject.AddComponent<LineRenderer>();
-			lineRenderer =GetComponent<LineRenderer>();
+			lineRenderer = GetComponent<LineRenderer>();
 		}
 		lineRenderer.useWorldSpace = true;
 		lineRenderer.SetColors(Color.white, Color.white);
 		lineRenderer.SetWidth(lineWidth, lineWidth);
-
 		ResetCatmullRom();
 	}
 	public void ResetCatmullRom() 
@@ -143,50 +145,78 @@ public class CatmullRomController : MonoBehaviour
 	}
 	public void SetRingMirror(int number,float radius)
 	{
-/*
-		int number=10;
-		float radius=0;
-		float radiusSelf = controlPointList[controlPointList.Count - 1].position.x - controlPointList[0].position.x;
-		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
-		Vector3 offset = transform.position - centerPos - new Vector3(radiusSelf, 0, 0);
-		for (int i = 1; i <number; i++) 
-		{
-			float radian= (float)i * 2f * Mathf.PI / (float)number;
-			float x = Mathf.Cos(radian) * radiusSelf;
-			float z = Mathf.Sin(radian) * radiusSelf;
- 			Vector3 pos = new Vector3(x, 0, z) + centerPos;
- 			Quaternion rot = Quaternion.FromToRotation(Vector3.right, pos-centerPos);
-			GameObject clone = Instantiate(this.gameObject, pos, rot) as GameObject;
-			clone.transform.Translate(offset);
- 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
-		}*/
+		/*
+				if (controlPointList.Count == 0) return;
+				ringMirrorSplineList.Clear();
+				ringMirrorBeamsSplineList.Clear();
+				float radiusSelf = controlPointList[controlPointList.Count - 1].position.x - controlPointList[0].position.x;
+				Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
+				Vector3 offset = transform.position - centerPos - new Vector3(radiusSelf, 0, 0);
+				for (int i = 1; i <number; i++) 
+				{
+					float radian= (float)i * 2f * Mathf.PI / (float)number;
+					float x = Mathf.Cos(radian) * radiusSelf;
+					float z = Mathf.Sin(radian) * radiusSelf;
+					Vector3 pos = new Vector3(x, 0, z) + centerPos;
+					Quaternion rot = Quaternion.FromToRotation(Vector3.right, pos-centerPos);
+					GameObject clone = Instantiate(this.gameObject, pos, rot) as GameObject;
+					clone.transform.Translate(offset);
+					clone.GetComponent<CatmullRomController>().ResetCatmullRom();
+					clone.GetComponent<CatmullRomController>().ShowControlPoint(false);
+					clone.GetComponent<ColliderDetection>().enabled = false;
+					ringMirrorSplineList.Add(clone);
+				}*/
 		if (controlPointList.Count == 0) return;
 		ringMirrorSplineList.Clear();
-		ringMirrorSplineList.Add(this.gameObject);
+		ringMirrorBeamsSplineList.Clear();
 		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
 		for (int i = 1; i <number; i++) 
 		{
 			float angle = (float)i*360 / (float)number;
-			GameObject clone = Instantiate(this.gameObject, this.transform.position, Quaternion.identity) as GameObject;
+			GameObject clone = Instantiate(this.gameObject, this.transform.position, this.transform.rotation) as GameObject;
 			clone.transform.RotateAround(centerPos, Vector3.up, angle);
- 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
+			if (i % 2 != 0)ScaleCatmullromSpline(clone,0.2f);
+			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
 			clone.GetComponent<CatmullRomController>().ShowControlPoint(false);
+			clone.GetComponent<ColliderDetection>().enabled = false;
 			ringMirrorSplineList.Add(clone);
+
+			if (i % 2 == 0) { 
+				clone = Instantiate(beams_clone, beams_clone.transform.position, beams_clone.transform.rotation) as GameObject;
+				clone.transform.RotateAround(centerPos, Vector3.up, angle);
+				clone.GetComponent<BeamsController>().RederBeams();
+				clone.GetComponent<BeamsController>().ShowControlPoint(false);
+				ringMirrorBeamsSplineList.Add(clone);
+			}
+
+
 		}
 	}
 	public void ShowControlPoint(bool isShow)
 	{
 		for (int i = 0; i < controlPointList.Count; i++)
 		{
- 			controlPointList[i].gameObject.GetComponent<SphereCollider>().enabled = isShow;
- 			controlPointList[i].gameObject.GetComponent<MeshRenderer>().enabled = isShow;
+			controlPointList[i].gameObject.GetComponent<SphereCollider>().enabled = isShow;
+			controlPointList[i].gameObject.GetComponent<MeshRenderer>().enabled = isShow;
 		}
 	}
 	public void ResetRingMirrorControlPoint(int number, float radius )
 	{
-		for(int i=1;i<ringMirrorSplineList.Count;i++){
+		for(int i=0;i<ringMirrorSplineList.Count;i++){
 			Destroy(ringMirrorSplineList[i]);
+		}
+		for (int i = 0; i < ringMirrorBeamsSplineList.Count; i++)
+		{
+			Destroy(ringMirrorBeamsSplineList[i]);
 		}
 		SetRingMirror(number, radius);
 	}
+	void ScaleCatmullromSpline(GameObject obj,float scaleValue)
+	{
+		List<Transform> controlPointList_obj=obj.GetComponent<CatmullRomController>().controlPointList;
+		Vector3 vecDiff = controlPointList_obj[controlPointList_obj.Count - 1].transform.position - controlPointList_obj[0].transform.position;
+		controlPointList_obj[controlPointList_obj.Count - 1].transform.position -= (vecDiff + new Vector3(0, -vecDiff.y*1.5f, 0)) * scaleValue;
+	
+	}
+
 }

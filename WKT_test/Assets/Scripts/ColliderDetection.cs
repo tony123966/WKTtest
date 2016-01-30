@@ -7,6 +7,7 @@ public class ColliderDetection : MonoBehaviour {
 	public GameObject collisionPlane;
 	public CatmullRomController catmullRomController;
 	public BeamsController beamsController;
+	public EaveController eaveController;
 	public ButtonController buttonCnotroller;
 	public GameObject chooseObj = null;
 	void Start() 
@@ -26,7 +27,11 @@ public class ColliderDetection : MonoBehaviour {
 							{
 								catmullRomController.AddControlPoint(hit.point);
 								catmullRomController.ResetCatmullRom();
-								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+								if (buttonCnotroller.isRingMirror) 
+								{
+									catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+									eaveController.SetCatmullRom(); 
+								}
 							}
 						}
 					}
@@ -43,7 +48,11 @@ public class ColliderDetection : MonoBehaviour {
 							{
 								catmullRomController.RemoveControlPoint(hit.collider.gameObject);
 								catmullRomController.ResetCatmullRom();
-								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+								if (buttonCnotroller.isRingMirror)
+								{
+									catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+									eaveController.SetCatmullRom(); 
+								}
 							}
 						}
 					}
@@ -52,6 +61,11 @@ public class ColliderDetection : MonoBehaviour {
 			{
 				if (chooseObj)
 				{
+					if (Input.GetMouseButtonUp(0))
+					{
+						chooseObj = null;
+						return;
+					}
 					Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 					RaycastHit hit;
 					if (Physics.Raycast(ray, out hit))
@@ -60,19 +74,19 @@ public class ColliderDetection : MonoBehaviour {
 						{
 							if (chooseObj.tag == "roofRidge") {
 								catmullRomController.MoveControlPoint(chooseObj, hit.point);
-								if (buttonCnotroller.isRingMirror) catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+								catmullRomController.ResetCatmullRom();
 							}
 							else if (chooseObj.tag == "beam")
 							{
 								beamsController.MoveAllBeamsControlPoint(hit.point - chooseObj.transform.position);
 							}
+							if (buttonCnotroller.isRingMirror) 
+							{ 
+								catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
+								eaveController.SetCatmullRom(); 
+							}
 						}
 					}
-					if (Input.GetMouseButtonUp(0))
-					{
-						chooseObj=null;
-					}
-					catmullRomController.ResetCatmullRom();
 				}
 				else 
 				{

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class ButtonController : MonoBehaviour {
 	public CatmullRomController catmullromController;
 	public BeamsController beamsController;
+	public EaveController eaveController;
 	public bool isAdd = false;
 	public bool isDelete = false;
 	public bool isMove = false;
@@ -16,7 +17,6 @@ public class ButtonController : MonoBehaviour {
 	void Start() 
 	{ 
 		 ringMirrorSliderValue=(int)ringMirrorSlider.value;
-		 beamsController.NewBeamsSpline();
 	}
 	public void SetButtonAdd() 
 	{
@@ -40,11 +40,19 @@ public class ButtonController : MonoBehaviour {
 	{
 		isRingMirror =true;
 		catmullromController.SetRingMirror(ringMirrorSliderValue, 0);
+		eaveController.SetCatmullRom();
 	}
 	public void SetRingMirrorSliderValue()
 	{
 		ringMirrorSliderValue = (int)(ringMirrorSlider.value);
-		if (isRingMirror) catmullromController.ResetRingMirrorControlPoint(ringMirrorSliderValue, 0);
+		if (isRingMirror) {
+			catmullromController.ResetRingMirrorControlPoint(ringMirrorSliderValue, 0);
+			eaveController.SetCatmullRom();
+		}
+	}
+	public void SetBeams()
+	{
+		beamsController.NewBeamsSpline();
 	}
 	public void ResetAllState() 
 	{ 
