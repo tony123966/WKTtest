@@ -169,13 +169,15 @@ public class CatmullRomController : MonoBehaviour
 		if (controlPointList.Count == 0) return;
 		ringMirrorSplineList.Clear();
 		ringMirrorBeamsSplineList.Clear();
+		ringMirrorSplineList.Add(this.gameObject);
+		ringMirrorBeamsSplineList.Add(beams_clone);
 		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
 		for (int i = 1; i <number; i++) 
 		{
 			float angle = (float)i*360 / (float)number;
 			GameObject clone = Instantiate(this.gameObject, this.transform.position, this.transform.rotation) as GameObject;
 			clone.transform.RotateAround(centerPos, Vector3.up, angle);
-			if (i % 2 != 0)ScaleCatmullromSpline(clone,0.2f);
+			//if (i % 2 != 0)ScaleCatmullromSpline(clone,0.05f);
 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
 			clone.GetComponent<CatmullRomController>().ShowControlPoint(false);
 			clone.GetComponent<ColliderDetection>().enabled = false;
@@ -202,10 +204,11 @@ public class CatmullRomController : MonoBehaviour
 	}
 	public void ResetRingMirrorControlPoint(int number, float radius )
 	{
-		for(int i=0;i<ringMirrorSplineList.Count;i++){
+		for(int i=1;i<ringMirrorSplineList.Count;i++)
+		{
 			Destroy(ringMirrorSplineList[i]);
 		}
-		for (int i = 0; i < ringMirrorBeamsSplineList.Count; i++)
+		for (int i = 1; i < ringMirrorBeamsSplineList.Count; i++)
 		{
 			Destroy(ringMirrorBeamsSplineList[i]);
 		}
@@ -215,8 +218,7 @@ public class CatmullRomController : MonoBehaviour
 	{
 		List<Transform> controlPointList_obj=obj.GetComponent<CatmullRomController>().controlPointList;
 		Vector3 vecDiff = controlPointList_obj[controlPointList_obj.Count - 1].transform.position - controlPointList_obj[0].transform.position;
-		controlPointList_obj[controlPointList_obj.Count - 1].transform.position -= (vecDiff + new Vector3(0, -vecDiff.y*1.5f, 0)) * scaleValue;
-	
+		controlPointList_obj[controlPointList_obj.Count - 1].transform.position += (vecDiff) * scaleValue;
 	}
 
 }

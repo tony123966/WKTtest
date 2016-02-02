@@ -8,8 +8,10 @@ public class ColliderDetection : MonoBehaviour {
 	public CatmullRomController catmullRomController;
 	public BeamsController beamsController;
 	public EaveController eaveController;
+	public RoofController roofController;
 	public ButtonController buttonCnotroller;
 	public GameObject chooseObj = null;
+
 	void Start() 
 	{
 	}
@@ -31,6 +33,7 @@ public class ColliderDetection : MonoBehaviour {
 								{
 									catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
 									eaveController.SetCatmullRom(); 
+									roofController.SetRoofTriangle();
 								}
 							}
 						}
@@ -51,7 +54,8 @@ public class ColliderDetection : MonoBehaviour {
 								if (buttonCnotroller.isRingMirror)
 								{
 									catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
-									eaveController.SetCatmullRom(); 
+									eaveController.SetCatmullRom();
+									roofController.SetRoofTriangle();
 								}
 							}
 						}
@@ -72,7 +76,8 @@ public class ColliderDetection : MonoBehaviour {
 					{
 						if (hit.collider.gameObject == collisionPlane.gameObject)
 						{
-							if (chooseObj.tag == "roofRidge") {
+							if (chooseObj.tag == "roofRidge")
+							{
 								catmullRomController.MoveControlPoint(chooseObj, hit.point);
 								catmullRomController.ResetCatmullRom();
 							}
@@ -80,10 +85,15 @@ public class ColliderDetection : MonoBehaviour {
 							{
 								beamsController.MoveAllBeamsControlPoint(hit.point - chooseObj.transform.position);
 							}
-							if (buttonCnotroller.isRingMirror) 
+							else if (chooseObj.tag == "eave") 
+							{
+								eaveController.MoveEaveControlPoint( hit.point - chooseObj.transform.position);
+							}
+							if (buttonCnotroller.isRingMirror && chooseObj.tag != "eave") 
 							{ 
 								catmullRomController.ResetRingMirrorControlPoint(buttonCnotroller.ringMirrorSliderValue, 0);
-								eaveController.SetCatmullRom(); 
+								eaveController.SetCatmullRom();
+								roofController.SetRoofTriangle();
 							}
 						}
 					}
@@ -96,7 +106,7 @@ public class ColliderDetection : MonoBehaviour {
 						RaycastHit hit;
 						if (Physics.Raycast(ray, out hit))
 						{
-							if (hit.collider.gameObject.tag == "roofRidge" || hit.collider.gameObject.tag == "beam")
+							if (hit.collider.gameObject.tag == "roofRidge" || hit.collider.gameObject.tag == "beam" || hit.collider.gameObject.tag == "eave")
 							{
 								chooseObj = hit.collider.gameObject;
 							}

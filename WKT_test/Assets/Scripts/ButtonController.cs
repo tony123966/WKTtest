@@ -6,6 +6,7 @@ public class ButtonController : MonoBehaviour {
 	public CatmullRomController catmullromController;
 	public BeamsController beamsController;
 	public EaveController eaveController;
+	public RoofController roofController;
 	public bool isAdd = false;
 	public bool isDelete = false;
 	public bool isMove = false;
@@ -41,6 +42,7 @@ public class ButtonController : MonoBehaviour {
 		isRingMirror =true;
 		catmullromController.SetRingMirror(ringMirrorSliderValue, 0);
 		eaveController.SetCatmullRom();
+		roofController.SetRoofTriangle();
 	}
 	public void SetRingMirrorSliderValue()
 	{
@@ -48,6 +50,7 @@ public class ButtonController : MonoBehaviour {
 		if (isRingMirror) {
 			catmullromController.ResetRingMirrorControlPoint(ringMirrorSliderValue, 0);
 			eaveController.SetCatmullRom();
+			roofController.SetRoofTriangle();
 		}
 	}
 	public void SetBeams()

@@ -23,7 +23,6 @@ public class BeamsController : MonoBehaviour {
 	}
 	public void NewBeamsSpline()
 	{
-
 		for (int i = 0; i < number; i++)
 		{
 			AddBeamsControlPoint(new Vector3(0, 0 - i * length, 0));
@@ -61,5 +60,9 @@ public class BeamsController : MonoBehaviour {
 			beamsSplineList[i].gameObject.GetComponent<SphereCollider>().enabled = isShow;
 			beamsSplineList[i].gameObject.GetComponent<MeshRenderer>().enabled = isShow;
 		}
+	}
+	public void MoveBeamsControlPointAndScale()
+	{
+	
 	}
 }

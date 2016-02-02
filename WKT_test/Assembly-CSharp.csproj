@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\ColliderDetection.cs" />
      <Compile Include="Assets\Scripts\EaveController.cs" />
      <Compile Include="Assets\Scripts\RoofController.cs" />
+     <None Include="Assets\Shaders\RoofShader.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
