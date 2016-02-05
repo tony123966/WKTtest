@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class BeamsController : MonoBehaviour {
 	public List<GameObject> beamsSplineList = new List<GameObject>();
-	public GameObject controlPoint_clone;
+	public GameObject beamControlPoint_clone;
 	private LineRenderer lineRenderer;
 	public float lineWidth = 1.0f;
 	public int number=3;
@@ -33,13 +33,17 @@ public class BeamsController : MonoBehaviour {
 	void AddBeamsControlPoint(Vector3 point)
 	{
 		GameObject clone;
-		clone = Instantiate(controlPoint_clone, point,Quaternion.identity) as GameObject;
+		clone = Instantiate(beamControlPoint_clone, point, Quaternion.identity) as GameObject;
 		clone.transform.parent = this.gameObject.transform;
 		beamsSplineList.Add(clone);
 	}
+	public void ResetBeams()
+	{
+		ControlPointSetting();
+		RederBeams();
+	}
 	public void RederBeams()
 	{
-		lineRenderer.SetVertexCount(beamsSplineList.Count);
 		for (int i = 0; i < beamsSplineList.Count; i++)
 		{
 			lineRenderer.SetPosition(i, beamsSplineList[i].transform.position);
@@ -64,5 +68,9 @@ public class BeamsController : MonoBehaviour {
 	public void MoveBeamsControlPointAndScale()
 	{
 	
+	}
+	void ControlPointSetting()
+	{
+		lineRenderer.SetVertexCount(beamsSplineList.Count);
 	}
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class CatmullRomController : MonoBehaviour
 {
 	public List<Transform> controlPointList = new List<Transform>();
+	public GameObject tails_clone;
 	public GameObject beams_clone;
 	public GameObject controlPoint_clone;
 	public float lineWidth = 1.0f;
@@ -14,6 +15,7 @@ public class CatmullRomController : MonoBehaviour
 	public List<Vector3> innerPointList = new List<Vector3>();
 	public List<GameObject> ringMirrorSplineList = new List<GameObject>();
 	public List<GameObject> ringMirrorBeamsSplineList = new List<GameObject>();
+	public List<GameObject> ringMirrorTailsSplineList = new List<GameObject>();
 
 	void Awake()
 	{
@@ -166,11 +168,14 @@ public class CatmullRomController : MonoBehaviour
 					clone.GetComponent<ColliderDetection>().enabled = false;
 					ringMirrorSplineList.Add(clone);
 				}*/
-		if (controlPointList.Count == 0) return;
+		if (controlPointList.Count < 2) return;
 		ringMirrorSplineList.Clear();
 		ringMirrorBeamsSplineList.Clear();
+		ringMirrorTailsSplineList.Clear();
+
 		ringMirrorSplineList.Add(this.gameObject);
 		ringMirrorBeamsSplineList.Add(beams_clone);
+		ringMirrorTailsSplineList.Add(tails_clone);
 		Vector3 centerPos = controlPointList[0].position -new Vector3(radius,0,0);
 		for (int i = 1; i <number; i++) 
 		{
@@ -186,12 +191,16 @@ public class CatmullRomController : MonoBehaviour
 			if (i % 2 == 0) { 
 				clone = Instantiate(beams_clone, beams_clone.transform.position, beams_clone.transform.rotation) as GameObject;
 				clone.transform.RotateAround(centerPos, Vector3.up, angle);
-				clone.GetComponent<BeamsController>().RederBeams();
+				clone.GetComponent<BeamsController>().ResetBeams();
 				clone.GetComponent<BeamsController>().ShowControlPoint(false);
 				ringMirrorBeamsSplineList.Add(clone);
 			}
 
-
+			clone = Instantiate(tails_clone, tails_clone.transform.position, tails_clone.transform.rotation) as GameObject;
+			clone.transform.RotateAround(centerPos, Vector3.up, angle);
+			clone.GetComponent<TailsController>().ResetCatmullRom();
+			clone.GetComponent<TailsController>().ShowControlPoint(false);
+			ringMirrorTailsSplineList.Add(clone);
 		}
 	}
 	public void ShowControlPoint(bool isShow)
@@ -211,6 +220,10 @@ public class CatmullRomController : MonoBehaviour
 		for (int i = 1; i < ringMirrorBeamsSplineList.Count; i++)
 		{
 			Destroy(ringMirrorBeamsSplineList[i]);
+		}
+		for (int i = 1; i < ringMirrorTailsSplineList.Count; i++)
+		{
+			Destroy(ringMirrorTailsSplineList[i]);
 		}
 		SetRingMirror(number, radius);
 	}

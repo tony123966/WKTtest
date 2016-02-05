@@ -35,7 +35,7 @@ public class EaveController : MonoBehaviour {
 		ShowControlPoint(false);
 	}
 	public void ResetCatmullRom()
-	{
+	{	
 		DisplayCatmullromSpline();
 		ControlPointSetting();
 		RenderCatmullromSpline();
@@ -91,11 +91,10 @@ public class EaveController : MonoBehaviour {
 				t += segmentation;
 			}
 		}
-		//InsertControlPoint();
 	}
 	void RenderCatmullromSpline()
 	{
-		if (catmullRomController.controlPointList.Count<2)return;
+		
 		for (int i = 0; i < innerPointList.Count; i++)
 		{
 			lineRenderer.SetPosition(i, innerPointList[i]);
