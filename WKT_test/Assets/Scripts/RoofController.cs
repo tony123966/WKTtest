@@ -15,11 +15,12 @@ public class RoofController : MonoBehaviour {
 		}
 	}
 	
-	public void SetRoofTriangle()
+	public void SetRoofMesh()
 	{
 		if( catmullRomController.controlPointList.Count<2)return;
 		Mesh mesh=new Mesh();
 		meshFilter.mesh=mesh;
+		mesh.Clear();
 		ringMirrorSplineList = catmullRomController.ringMirrorSplineList;
 		int count=ringMirrorSplineList.Count * catmullRomController.innerPointList.Count;
 		Vector3[] verticies = new Vector3[count];

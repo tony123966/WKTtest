@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 public class BeamsController : MonoBehaviour {
+
 	public List<GameObject> beamsSplineList = new List<GameObject>();
+	public BeamsMesh beamsMesh;
 	public GameObject beamControlPoint_clone;
 	private LineRenderer lineRenderer;
 	public float lineWidth = 1.0f;
@@ -29,6 +31,7 @@ public class BeamsController : MonoBehaviour {
 		}
 		lineRenderer.SetVertexCount(number);
 		RederBeams();
+		beamsMesh.SetBeamsMesh();
 	}
 	void AddBeamsControlPoint(Vector3 point)
 	{
@@ -41,6 +44,7 @@ public class BeamsController : MonoBehaviour {
 	{
 		ControlPointSetting();
 		RederBeams();
+		beamsMesh.SetBeamsMesh();
 	}
 	public void RederBeams()
 	{
@@ -56,6 +60,7 @@ public class BeamsController : MonoBehaviour {
 			beamsSplineList[i].transform.Translate(dis.x, dis.y, dis.z);
 		}
 		RederBeams();
+		beamsMesh.SetBeamsMesh();
 	}
 	public void ShowControlPoint(bool isShow)
 	{
@@ -73,4 +78,5 @@ public class BeamsController : MonoBehaviour {
 	{
 		lineRenderer.SetVertexCount(beamsSplineList.Count);
 	}
+
 }

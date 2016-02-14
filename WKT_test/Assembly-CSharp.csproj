@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BeamsController.cs" />
+     <Compile Include="Assets\Scripts\BeamsMesh.cs" />
      <Compile Include="Assets\Scripts\ButtonController.cs" />
      <Compile Include="Assets\Scripts\CatmullRomController.cs" />
      <Compile Include="Assets\Scripts\ColliderDetection.cs" />

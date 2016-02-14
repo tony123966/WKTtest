@@ -190,9 +190,9 @@ public class CatmullRomController : MonoBehaviour
 
 			if (i % 2 == 0) { 
 				clone = Instantiate(beams_clone, beams_clone.transform.position, beams_clone.transform.rotation) as GameObject;
-				clone.transform.RotateAround(centerPos, Vector3.up, angle);
 				clone.GetComponent<BeamsController>().ResetBeams();
 				clone.GetComponent<BeamsController>().ShowControlPoint(false);
+				clone.transform.RotateAround(centerPos, Vector3.up, angle);
 				ringMirrorBeamsSplineList.Add(clone);
 			}
 
