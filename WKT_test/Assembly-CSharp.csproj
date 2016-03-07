@@ -48,11 +48,16 @@
      <Compile Include="Assets\Scripts\BeamsController.cs" />
      <Compile Include="Assets\Scripts\BeamsMesh.cs" />
      <Compile Include="Assets\Scripts\ButtonController.cs" />
+     <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CatmullRomController.cs" />
-     <Compile Include="Assets\Scripts\ColliderDetection.cs" />
      <Compile Include="Assets\Scripts\EaveController.cs" />
+     <Compile Include="Assets\Scripts\Gizmo.cs" />
+     <Compile Include="Assets\Scripts\GizmoHandle.cs" />
+     <Compile Include="Assets\Scripts\GizmoSelect.cs" />
      <Compile Include="Assets\Scripts\RoofController.cs" />
      <Compile Include="Assets\Scripts\TailsController.cs" />
+     <None Include="Assets\Shaders\AlwaysOnTopCenter.shader" />
+     <None Include="Assets\Shaders\AlwaysOnTop.shader" />
      <None Include="Assets\Shaders\RoofShader.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

@@ -57,7 +57,7 @@ public class BeamsController : MonoBehaviour {
 	{
 		for (int i = 0; i < beamsSplineList.Count; i++)
 		{
-			beamsSplineList[i].transform.Translate(dis.x, dis.y, dis.z);
+			beamsSplineList[i].transform.position+=dis;
 		}
 		RederBeams();
 		beamsMesh.SetBeamsMesh();

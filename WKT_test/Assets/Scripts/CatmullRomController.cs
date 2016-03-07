@@ -185,7 +185,6 @@ public class CatmullRomController : MonoBehaviour
 			//if (i % 2 != 0)ScaleCatmullromSpline(clone,0.05f);
 			clone.GetComponent<CatmullRomController>().ResetCatmullRom();
 			clone.GetComponent<CatmullRomController>().ShowControlPoint(false);
-			clone.GetComponent<ColliderDetection>().enabled = false;
 			ringMirrorSplineList.Add(clone);
 
 			if (i % 2 == 0) { 

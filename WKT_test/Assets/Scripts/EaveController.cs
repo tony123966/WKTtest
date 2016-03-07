@@ -117,7 +117,7 @@ public class EaveController : MonoBehaviour {
 			Destroy(eaveControlPointList[i]);
 		}
 	}
-	public void MoveEaveControlPoint(Vector3 dis)
+	public void MoveAllEaveControlPoint(Vector3 dis)
 	{
 		for(int i=0;i<eaveControlPointList.Count;i++){
 			eaveControlPointList[i].transform.Translate(dis);
